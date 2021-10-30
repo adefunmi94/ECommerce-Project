@@ -1,7 +1,9 @@
 package com.personalproject.ecommerce.config;
 
+import com.personalproject.ecommerce.entity.Country;
 import com.personalproject.ecommerce.entity.Product;
 import com.personalproject.ecommerce.entity.ProductCategory;
+import com.personalproject.ecommerce.entity.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -30,19 +32,22 @@ public class DataRestConfig implements RepositoryRestConfigurer {
         HttpMethod[]  theUnsurportedMethod = {HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE};
 
 //        disable product Method: PUT< POST< DELETE
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsurportedMethod));
-
+        disableHttpMethods(Product.class, config, theUnsurportedMethod);
 //         disable productCategory Method: PUT, POST,DELETE
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsurportedMethod));
+        disableHttpMethods( ProductCategory.class, config, theUnsurportedMethod);
+        disableHttpMethods( Country.class, config, theUnsurportedMethod);
+        disableHttpMethods( State.class, config, theUnsurportedMethod);
 
 //        call internal helper method
 
         exposedIds(config);
 
+    }
+
+    private void disableHttpMethods( Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsurportedMethod) {
+        config.getExposureConfiguration()
+                .forDomainType(theClass)
+                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsurportedMethod));
     }
 
     private void exposedIds(RepositoryRestConfiguration config) {
